@@ -1,0 +1,28 @@
+<!DOCTYPE html><html>
+    <head>
+        <title>Google Sheets to JavaScript</title>
+        <script src="DimSheet.js"></script>
+    </head>
+<body>
+    <h1>Import Google Sheet data to your WebSite</h1>
+    <!-- <table class="output"></table> -->
+    <h2>Google Sheet with rows as arrays (look at the console to understand better)</h2>
+    <div id="outputArray"></div>
+    <h2>Google Sheet with rows as objects</h2>
+    <div id="outputObject"></div>
+    <h2>Google Sheet as HTML Table</h2>
+    <div id="outputTable"></div>
+
+
+<script>
+const sheetURL = 'https://docs.google.com/spreadsheets/d/1phV2TTy5pki_j0E3HH2st_OBWZY3gxrxqGR_Q-4pfKw';
+fetchGoogleSheet(sheetURL).then(GoogleSheet => {
+    console.log({GoogleSheet});
+    console.log(GoogleSheet.asHtmlTable);
+    outputArray.innerHTML = GoogleSheet.asArrays.toString();
+    outputObject.innerHTML = JSON.stringify(GoogleSheet.asObjects);
+    outputTable.innerHTML = GoogleSheet.asHtmlTable.outerHTML;
+}).catch(e=>{});
+</script>
+</body>
+</html>
