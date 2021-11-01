@@ -1,3 +1,10 @@
+/**
+ * @file DimSheet.js.
+ * @author Dimitris Vainanidis,
+ * @copyright Dimitris Vainanidis, 2021
+ */
+
+
 /* jshint unused:false , esversion: 10 */
 'use strict';
 
@@ -10,12 +17,13 @@
 function fetchGoogleSheet(sheetURL){
     return new Promise(function(resolve, reject) {        
 
-        //get string until the last "/", or entire string
-        if (!sheetURL.includes("docs.google.com/spreadsheets/d/")) {console.error('Invalid Google Sheet URL'); reject({});return}
-        let linktoFetch = sheetURL.includes("edit") ? sheetURL.match('.*/')[0] : sheetURL;          
-        if (linktoFetch.slice(-1)!="/") {linktoFetch +="/"}
+        if (!sheetURL.includes("docs.google.com/spreadsheets/d/")) {console.error('Invalid Google Sheet URL'); reject({});return}       //(not inside then/catch)
+        //get URL string until the last "/", or entire string (if programmer provided the clean URL)
+        let linktoFetch = sheetURL.includes("edit") ? sheetURL.match('.*/')[0] : sheetURL;
+        let fetchStringEnding = linktoFetch.slice(-1)=="/" ? "gviz/tq?" : "/gviz/tq?";      //add this to the end of URL string
+        linktoFetch += fetchStringEnding;
 
-        fetch(linktoFetch+"gviz/tq?")
+        fetch(linktoFetch)
             .then(res => {
                 if (res.ok) {return res.text()}         //res is always a valid response 
                 else {throw "Can't fetch Google Sheet"}
@@ -34,9 +42,7 @@ function fetchGoogleSheet(sheetURL){
             }).then(table=>{
                 const labels = table.cols.map(column => column.label);
                 const rows = table.rows.map(row => row.c.map(cell => cell.v));
-                const asArrays = [[...labels],...rows];
 
-                let asObjects = [];
                 const makeAnObject = (labels, values) => {
                     const len = labels.length;
                     let obj={};
@@ -45,28 +51,37 @@ function fetchGoogleSheet(sheetURL){
                     }
                     return obj;
                 };
-                rows.forEach(row=>asObjects.push(makeAnObject(labels,row)));
 
-                let asNamedObjects = {};
-                try{    //not unique first column...
-                rows.forEach(row=>{
-                    asNamedObjects[row[0]] = makeAnObject(labels,row);
-                });
-                }catch(e){}
+                let result = {labels,rows,
+                    asArrays:function(){
+                        return [[...labels],...rows];
+                    },
+                    asObjects:function(){
+                        let asObjects = [];
+                        rows.forEach(row=>asObjects.push(makeAnObject(labels,row)));
+                        return asObjects;
+                    },
+                    asNamedObjects: function(){
+                        let obj = {};
+                        rows.forEach(row=>{
+                            obj[row[0]] = makeAnObject(labels,row);
+                        });
+                        return obj;
+                    }, 
+                    asHtmlTable: function(){
+                        let asHtmlTable = document.createElement('table');
+                        let innerTable = '';
+                        let makeTableRow = (identifier,valuesArray) => {
+                            let rowItems = valuesArray.map(value=>`<${identifier}>${value}</${identifier}>`); 
+                            return '<tr>'+rowItems.join('')+'</tr>';
+                        };
+                        innerTable += makeTableRow('th',this.labels);
+                        this.rows.forEach(row=>{innerTable += makeTableRow('td',row)});
+                        asHtmlTable.innerHTML = innerTable;
+                        return asHtmlTable;
+                    },
 
-                let asHtmlTable = document.createElement('table');
-                try{
-                    let innerTable = '';
-                    let makeTableRow = (identifier,valuesArray) => {
-                        let rowItems = valuesArray.map(value=>`<${identifier}>${value}</${identifier}>`); 
-                        return '<tr>'+rowItems.join('')+'</tr>';
-                    };
-                    innerTable += makeTableRow('th',labels);
-                    rows.forEach(row=>{innerTable += makeTableRow('td',row)});
-                    asHtmlTable.innerHTML = innerTable;
-                }catch(e){}
-
-                let result = {labels,rows,asArrays,asObjects,asNamedObjects,asHtmlTable};
+                };
                 resolve (result);
 
             }).catch(e=>{console.error(e);reject(e)});

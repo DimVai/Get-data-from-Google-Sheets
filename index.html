@@ -15,13 +15,19 @@
 
 
 <script>
-const sheetURL = 'https://docs.google.com/spreadsheets/d/1phV2TTy5pki_j0E3HH2st_OBWZY3gxrxqGR_Q-4pfKw';
+const sheetURL = 'https://docs.google.com/spreadsheets/d/1phV2TTy5pki_j0E3HH2st_OBWZY3gxrxqGR_Q-4pfKw/edit?usp=sharing';
+var GS;
 fetchGoogleSheet(sheetURL).then(GoogleSheet => {
+    GS = GoogleSheet;
     console.log({GoogleSheet});
-    console.log(GoogleSheet.asHtmlTable);
-    outputArray.innerHTML = GoogleSheet.asArrays.toString();
-    outputObject.innerHTML = JSON.stringify(GoogleSheet.asObjects);
-    outputTable.innerHTML = GoogleSheet.asHtmlTable.outerHTML;
+    let [asArrays,asObjects,asNamedObjects,asHtmlTable] = [GoogleSheet.asArrays(),GoogleSheet.asObjects(),GoogleSheet.asNamedObjects(),GoogleSheet.asHtmlTable()]
+    console.log({asArrays});
+    console.log({asObjects});
+    console.log({asNamedObjects});
+    console.log({asHtmlTable});
+    outputArray.innerHTML = GoogleSheet.asArrays().toString();
+    outputObject.innerHTML = JSON.stringify(GoogleSheet.asObjects());
+    outputTable.innerHTML = GoogleSheet.asHtmlTable().outerHTML;
 }).catch(e=>{});
 </script>
 </body>
