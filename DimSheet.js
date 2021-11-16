@@ -52,6 +52,23 @@ function fetchGoogleSheet(sheetURL){
                     return obj;
                 };
 
+                const stats = array => {
+                    let [data,length,sum,mean,mode,count] = [array,array.length,0,0,0,0,];
+                    let frequencies = {};
+                    array.forEach(value => {
+                      if (!isNaN(value)) {
+                        sum += value;
+                        count++;
+                      }
+                      frequencies[value.toString()] = (frequencies[value.toString()]??0) + 1;  // jshint ignore:line
+                    });
+                    [sum,mean] = count ? [sum,sum/count] : [null,null];  //if no numbers at all, sum=mean=null
+                    let maxFreq = Math.max(...Object.values(frequencies));
+                    mode = Object.keys(frequencies).find(key => frequencies[key] == maxFreq);
+                    if (!isNaN(mode)) {mode = Number(mode)}         //convert string to number
+                    return {sum,mean,mode,count,frequencies,length,data};
+                };
+
                 let result = {labels,rows,
                     asArrays:function(){
                         return [[...labels],...rows];
@@ -80,6 +97,11 @@ function fetchGoogleSheet(sheetURL){
                         asHtmlTable.innerHTML = innerTable;
                         return asHtmlTable;
                     },
+                    statistics: function(fieldForStatistics,fieldToFilter,filterValue){
+                        let filteredArray = (fieldToFilter) ? this.asObjects().filter(row=>row[fieldToFilter]==filterValue) : this.asObjects();
+                        return stats(filteredArray.map(row=>row[fieldForStatistics]));
+                    },
+
 
                 };
                 resolve (result);

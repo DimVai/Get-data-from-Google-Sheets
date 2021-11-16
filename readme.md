@@ -19,7 +19,7 @@ https://dimvai.github.io/Get-data-from-Google-Sheets/
 
 ```JavaScript
 fetchGoogleSheet(sheetURL).then(GoogleSheet => {
-    //your code that uses the GoogleSheet Object
+    //your code that uses the returned GoogleSheet Object
 }).catch(/*use a custom catch here*/);
 ```
 
@@ -35,22 +35,24 @@ GoogleSheet.rows
 //returns header and rows (labels and rows combined) as an array of arrays:            
 GoogleSheet.asArrays()    
 
-//returns the data rows as an array of objects, with property names from the header row
+//returns the data rows as an array of objects, 
+//with property names from the headers (first row):
 GoogleSheet.asObjects()   
 
-//returns the data rows as an object of objects 
-//with names from the first column (row-ID) and property names from the header row.
-//The first row must have unique valus, for this to work properly:
+//returns the data rows as an object of objects.
+//The objects have names from the first column (row-ID) and property names from the headers.
+//The first row must have unique values, of course, for this to work properly:
 GoogleSheet.asNamedObjects()
 
-//returns the entire table as an html table (with tr, td)
+//returns the entire table as an html table (with tr, td, etc)
 GoogleSheet.asHtmlTable()
 ```
 
+
 ## **Examples**
-In order to import the entire table in the HTML element with `id="outputTable"`, use:
+In order to import the entire (HTML) table inside the HTML element with `id="sheetDiv"`, use:
 ```JavaScript
-outputTable.innerHTML = GoogleSheet.asHtmlTable().outerHTML;
+sheetDiv.innerHTML = GoogleSheet.asHtmlTable().outerHTML;
 ```
 
 In order to access the second (data) row as an array:
@@ -58,7 +60,28 @@ In order to access the second (data) row as an array:
 GoogleSheet.asArrays()[2];
 ```
 
-In order to access the data at the cell that in the row (with row-ID - first column) "secretary" and column "surname" use:
+In order to access the data at the cell that in the row (row-ID / value of first column) "secretary" and column "surname" use:
 ```JavaScript
 GoogleSheet.asNamedObjects()["secretary"]["surname"];
 ```
+
+
+## **Statistics**
+
+You can extract simple statistics for the table using the method `statistics()`. The parameters `fieldToFilter` and `filterValue` are optional in case you want to filter your data, before you extract the statistic. 
+
+```JavaScript
+GoogleSheet.statistics(fieldForStatistics,fieldToFilter,filterValue)
+```
+Examples of statistics:
+```JavaScript
+//Get the sum of the field (column) "Revenue" (without any filters)
+GoogleSheet.statistics("Revenue").sum;
+//Get the mean of the field "Rating", with the filter: "FirstName"="Anna"
+GoogleSheet.statistics("Rating","FirstName","Anna").mean;
+```
+The entire `statistics()` object has the following statistics: `sum`, `mean`, `mode`, `count` (how many valid numbers there are), `frequencies` (frequency table) and `data` (an array of the (maybe filtered) data)
+
+
+
+

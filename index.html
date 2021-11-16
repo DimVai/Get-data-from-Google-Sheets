@@ -16,15 +16,17 @@
 
 <script>
 const sheetURL = 'https://docs.google.com/spreadsheets/d/1phV2TTy5pki_j0E3HH2st_OBWZY3gxrxqGR_Q-4pfKw/edit?usp=sharing';
-var GS;
-fetchGoogleSheet(sheetURL).then(GoogleSheet => {
-    GS = GoogleSheet;
+var GoogleSheet;
+fetchGoogleSheet(sheetURL).then(GS => {
+    GoogleSheet = GS;
     console.log({GoogleSheet});
-    let [asArrays,asObjects,asNamedObjects,asHtmlTable] = [GoogleSheet.asArrays(),GoogleSheet.asObjects(),GoogleSheet.asNamedObjects(),GoogleSheet.asHtmlTable()]
+    let [asArrays,asObjects,asNamedObjects,asHtmlTable,statistics,statisticsWithFilter] = [GoogleSheet.asArrays(),GoogleSheet.asObjects(),GoogleSheet.asNamedObjects(),GoogleSheet.asHtmlTable(),GoogleSheet.statistics("Rating"),GoogleSheet.statistics("Rating","First","Anna")];
     console.log({asArrays});
     console.log({asObjects});
     console.log({asNamedObjects});
     console.log({asHtmlTable});
+    console.log({statistics});
+    console.log({statisticsWithFilter});
     outputArray.innerHTML = GoogleSheet.asArrays().toString();
     outputObject.innerHTML = JSON.stringify(GoogleSheet.asObjects());
     outputTable.innerHTML = GoogleSheet.asHtmlTable().outerHTML;
