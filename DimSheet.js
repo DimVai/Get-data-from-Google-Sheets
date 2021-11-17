@@ -24,10 +24,12 @@ function fetchGoogleSheet(sheetURL){
         linktoFetch += fetchStringEnding;
 
         fetch(linktoFetch)
+
             .then(res => {
                 if (res.ok) {return res.text()}         //res is always a valid response 
                 else {throw "Can't fetch Google Sheet"}
             })
+
             .then(data =>{
                 const cleanData = data.match(/{.+}/);   //get string between outer { } 
                 try{
@@ -39,6 +41,7 @@ function fetchGoogleSheet(sheetURL){
                     console.error(sheet);
                     throw("Although we found a valid Google Sheet, we can't access its data");
                 }
+
             }).then(table=>{
                 const labels = table.cols.map(column => column.label);
                 const rows = table.rows.map(row => row.c.map(cell => cell.v));
@@ -53,20 +56,28 @@ function fetchGoogleSheet(sheetURL){
                 };
 
                 const stats = array => {
-                    let [data,length,sum,mean,mode,count] = [array,array.length,0,0,0,0,];
+                    if (!Array.isArray(array)) {console.error("Not an array in stats(array) function");return null} 
+                    let [data,size,sum,mean,mode,min,max] = [array,array.length,null,null,null,null,null];
+                    //numbers,count,min,max
+                    let numbers = data.filter(n=>!isNaN(n));
+                    let count = numbers.length;
+                    //sum,mean
+                    if (count){   //if no numbers at all, sum=mean=null
+                      sum = numbers.reduce((a,b)=>a+b); 
+                      mean = sum/count; 
+                      min = Math.min(...numbers);
+                      max = Math.max(...numbers);
+                    }
+                    //frequencies
                     let frequencies = {};
                     array.forEach(value => {
-                      if (!isNaN(value)) {
-                        sum += value;
-                        count++;
-                      }
                       frequencies[value.toString()] = (frequencies[value.toString()]??0) + 1;  // jshint ignore:line
                     });
-                    [sum,mean] = count ? [sum,sum/count] : [null,null];  //if no numbers at all, sum=mean=null
+                    //mode
                     let maxFreq = Math.max(...Object.values(frequencies));
                     mode = Object.keys(frequencies).find(key => frequencies[key] == maxFreq);
-                    if (!isNaN(mode)) {mode = Number(mode)}         //convert string to number
-                    return {sum,mean,mode,count,frequencies,length,data};
+                    if (!isNaN(mode)) {mode = Number(mode)}         //convert string to number if you can
+                    return {data,size,numbers,count,sum,mean,mode,min,max,frequencies};
                 };
 
                 let result = {labels,rows,
@@ -98,12 +109,13 @@ function fetchGoogleSheet(sheetURL){
                         return asHtmlTable;
                     },
                     statistics: function(fieldForStatistics,fieldToFilter,filterValue){
+                        if (!fieldForStatistics) {console.error("Missing field in statistics(field) method");return null}
                         let filteredArray = (fieldToFilter) ? this.asObjects().filter(row=>row[fieldToFilter]==filterValue) : this.asObjects();
                         return stats(filteredArray.map(row=>row[fieldForStatistics]));
                     },
 
-
                 };
+
                 resolve (result);
 
             }).catch(e=>{console.error(e);reject(e)});

@@ -1,6 +1,6 @@
 
-## Use a Google Sheet as a database for your website or just bring a few data from Google Sheet to your website
-It does not use the Google Apps script, in only needs a publicly available Google Sheet File which has a unique sheet and one table. 
+## Use a Google Sheet as a database for your website. Or just bring a few data with simple statistics from Google Sheet to your website
+It does not use the Google Apps script, in only needs a publicly available Google Sheet file which has a unique sheet and one table. 
 
 See it in action here:
 
@@ -80,7 +80,22 @@ GoogleSheet.statistics("Revenue").sum;
 //Get the mean of the field "Rating", with the filter: "FirstName"="Anna"
 GoogleSheet.statistics("Rating","FirstName","Anna").mean;
 ```
-The entire `statistics()` object has the following statistics: `sum`, `mean`, `mode`, `count` (how many valid numbers there are), `frequencies` (frequency table) and `data` (an array of the (maybe filtered) data)
+The entire `statistics()` object has the following properties: `sum`, `mean`, `mode`, `min`, `max`, `data` (the entire array of the -maybe filtered- data), `size`, `numbers` (an array containing only the valid numbers), `count` (how many valid numbers there are), and `frequencies` (the frequency table as an object). 
+
+### **Advice for Speed/Performance**
+If you want to extract multiple statistics for the same array, you are adviced to call statistics only **once**, for speed/performace reasons, so the statistics are not calculated every time:
+```JavaScript
+//Quick and Performant way:
+let revenueStats = GoogleSheet.statistics("Revenue");       //call statistics() only once
+let revenue = RevenueStats.sum;
+let AverageRevenuePerSale = RevenueStats.mean;
+let mostPopularSale = RevenueStats.mode;
+//Slower way (calls statistics every time):
+let revenue = GoogleSheet.statistics("Revenue").sum;
+let AverageRevenuePerSale = GoogleSheet.statistics("Revenue").mean;
+let mostPopularSale = GoogleSheet.statistics("Revenue").mode;
+
+```
 
 
 
