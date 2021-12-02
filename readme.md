@@ -88,11 +88,11 @@ If you want to extract multiple statistics for the same array, you are adviced t
 //Quick and Performant way:
 let revenueStats = GoogleSheet.statistics("Revenue");       //call statistics() only once
 let revenue = RevenueStats.sum;
-let AverageRevenuePerSale = RevenueStats.mean;
+let averageRevenuePerSale = RevenueStats.mean;
 let mostPopularSale = RevenueStats.mode;
 //Slower way (calls statistics every time):
 let revenue = GoogleSheet.statistics("Revenue").sum;
-let AverageRevenuePerSale = GoogleSheet.statistics("Revenue").mean;
+let averageRevenuePerSale = GoogleSheet.statistics("Revenue").mean;
 let mostPopularSale = GoogleSheet.statistics("Revenue").mode;
 
 ```
