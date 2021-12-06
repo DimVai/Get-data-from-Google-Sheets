@@ -20,6 +20,9 @@ var GoogleSheet;
 fetchGoogleSheet(sheetURL).then(GS => {
     GoogleSheet = GS;
     console.log({GoogleSheet});
+    outputArray.innerHTML = GoogleSheet.asArrays().toString();
+    outputObject.innerHTML = JSON.stringify(GoogleSheet.asObjects());
+    outputTable.innerHTML = GoogleSheet.asHtmlTable().outerHTML;
     let [asArrays,asObjects,asNamedObjects,asHtmlTable,statistics,statisticsWithFilter] = [GoogleSheet.asArrays(),GoogleSheet.asObjects(),GoogleSheet.asNamedObjects(),GoogleSheet.asHtmlTable(),GoogleSheet.statistics("Rating"),GoogleSheet.statistics("Rating","First","Anna")];
     console.log({asArrays});
     console.log({asObjects});
@@ -27,9 +30,6 @@ fetchGoogleSheet(sheetURL).then(GS => {
     console.log({asHtmlTable});
     console.log({statistics});
     console.log({statisticsWithFilter});
-    outputArray.innerHTML = GoogleSheet.asArrays().toString();
-    outputObject.innerHTML = JSON.stringify(GoogleSheet.asObjects());
-    outputTable.innerHTML = GoogleSheet.asHtmlTable().outerHTML;
 }).catch(e=>{});
 </script>
 </body>

@@ -15,18 +15,23 @@ https://dimvai.github.io/Get-data-from-Google-Sheets/
 ```
 ### 2 Make your Google Sheet **publicly available** and copy the **URL** that Google Sheets provides during this action.
 
-### 3 In your custom JavaScript code, use the function `fetchGoogleSheet(sheetURL)`. The `sheetURL` is what you got in the previous step. The function returns a promise of an Object, so you can use `async/await` or `then`:
+### 3 In your custom JavaScript code, use the function `fetchGoogleSheet(sheetURL)`. The `sheetURL` is what you got in the previous step. The function returns a promise of an Object, so you can use either `then` :
 
 ```JavaScript
 fetchGoogleSheet(sheetURL).then(GoogleSheet => {
     //your code that uses the returned GoogleSheet Object
 }).catch(/*use a custom catch here*/);
 ```
+ or you can use `async/await`:
+```JavaScript
+GoogleSheet = await fetchGoogleSheet(sheetURL);
+```
+
 
 The object that gets returned from `fetchGoogleSheet(sheetURL)`, in this case the `GoogleSheet` object, contains the following properties and methods:
 
 ```JavaScript
-//returns the headers (first row of table) as an array:
+//returns the headers (first row of table) as an array.
 GoogleSheet.labels  
 
 //returns the data rows of the table as an array of arrays:   
@@ -48,7 +53,6 @@ GoogleSheet.asNamedObjects()
 GoogleSheet.asHtmlTable()
 ```
 
-
 ## **Examples**
 In order to import the entire (HTML) table inside the HTML element with `id="sheetDiv"`, use:
 ```JavaScript
@@ -64,6 +68,12 @@ In order to access the data at the cell that in the row (row-ID / value of first
 ```JavaScript
 GoogleSheet.asNamedObjects()["secretary"]["surname"];
 ```
+
+
+## **CAUTION: In order for the `DimSheet.js` to work properly**
+* Labels (first row) must have unique, non-empty values.
+* In order to work with objects, IDs (first column) must have unique, non-empty values. 
+* Remember to have/set the right **data types** in your SpreadSheet. If a column has mixed type data (for example strings, numbers, booleans etc), Google Sheet may not send everything, so some values will be `null`. This is not DimSheet's fault, it is a feature of Google Sheets. You can see what type Google Sheet has provided using `GoogleSheet.columnTypes`. If you have a problem with mixed types, you can try to set "*plain text*" as the data type of the column in your Google Sheet.  
 
 
 ## **Statistics**
@@ -82,10 +92,10 @@ GoogleSheet.statistics("Rating","FirstName","Anna").mean;
 ```
 The entire `statistics()` object has the following properties: `sum`, `mean`, `mode`, `min`, `max`, `data` (the entire array of the -maybe filtered- data), `size`, `numbers` (an array containing only the valid numbers), `count` (how many valid numbers there are), and `frequencies` (the frequency table as an object). 
 
-### **Advice for Speed/Performance**
+## **Advice for Speed/Performance**
 If you want to extract multiple statistics for the same array, you are adviced to call statistics only **once**, for speed/performace reasons, so the statistics are not calculated every time:
 ```JavaScript
-//Quick and Performant way:
+//Quick and performant way:
 let revenueStats = GoogleSheet.statistics("Revenue");       //call statistics() only once
 let revenue = RevenueStats.sum;
 let averageRevenuePerSale = RevenueStats.mean;
@@ -97,6 +107,6 @@ let mostPopularSale = GoogleSheet.statistics("Revenue").mode;
 
 ```
 
-
+## **Enjoy!**
 
 
