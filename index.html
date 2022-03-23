@@ -1,11 +1,13 @@
 <!DOCTYPE html><html>
-    <head>
-        <title>Google Sheets to JavaScript</title>
-        <script src="DimSheet.js"></script>
-    </head>
+
+<head>
+    <title>Google Sheets to JavaScript</title>
+    <script defer src="DimSheet.js"></script>
+</head>
+
 <body>
+
     <h1>Import Google Sheet data to your WebSite</h1>
-    <!-- <table class="output"></table> -->
     <h2>Google Sheet with rows as arrays (look at the console to understand better)</h2>
     <div id="outputArray"></div>
     <h2>Google Sheet with rows as objects</h2>
@@ -14,11 +16,13 @@
     <div id="outputTable"></div>
 
 
-<script>
-const sheetURL = 'https://docs.google.com/spreadsheets/d/1phV2TTy5pki_j0E3HH2st_OBWZY3gxrxqGR_Q-4pfKw/edit?usp=sharing';
-var GoogleSheet;
-fetchGoogleSheet(sheetURL).then(GS => {
-    GoogleSheet = GS;
+
+<script type="module">   
+// type="module", so we can use await inside the script and also can defer it and execute it after importing DimSheet.js
+
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/1phV2TTy5pki_j0E3HH2st_OBWZY3gxrxqGR_Q-4pfKw/edit?usp=sharing';
+    var GoogleSheet = await fetchGoogleSheet(sheetURL);
+
     console.log({GoogleSheet});
     outputArray.innerHTML = GoogleSheet.asArrays().toString();
     outputObject.innerHTML = JSON.stringify(GoogleSheet.asObjects());
@@ -30,7 +34,8 @@ fetchGoogleSheet(sheetURL).then(GS => {
     console.log({asHtmlTable});
     console.log({statistics});
     console.log({statisticsWithFilter});
-}).catch(e=>{});
+
 </script>
+
 </body>
 </html>
