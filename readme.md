@@ -76,7 +76,7 @@ GoogleSheet.asNamedObjects()["secretary"]["surname"];
 
 ## **CAUTION: In order for the `DimSheet.js` to work properly**
 * Labels (first row) must have unique, non-empty values.
-* In order to work with objects, IDs (first column) must have unique, non-empty values. 
+* In order to work with named objects (`asNamedObjects`), the first column must contain unique values that will be used as ID's, non-empty values. If you do not need named objects, this is not mandatory. 
 * Remember to have/set the right **data types** in your SpreadSheet. If a column has mixed type data (for example strings, numbers, booleans etc), Google Sheet may not send everything, so some values will be `null`. This is not DimSheet's fault, it is a feature of Google Sheets. You can see what type Google Sheet has provided using `GoogleSheet.columnTypes`. If you have a problem with mixed types, you can try to set "*plain text*" as the data type of the column in your Google Sheet.  
 
 
@@ -89,7 +89,11 @@ GoogleSheet.statistics(fieldForStatistics,fieldToFilter,filterValue)
 ```
 Examples of statistics:
 ```JavaScript
+<<<<<<< Updated upstream
 // Get the sum of the field (column) "Revenue" (without any filters)
+=======
+//Get the sum of the field (column) "Revenue" (including all rows without any filters)
+>>>>>>> Stashed changes
 GoogleSheet.statistics("Revenue").sum;
 // Get the mean of the field "Rating", with the filter: "FirstName"="Anna"
 GoogleSheet.statistics("Rating","FirstName","Anna").mean;
