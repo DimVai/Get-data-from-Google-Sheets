@@ -89,11 +89,7 @@ GoogleSheet.statistics(fieldForStatistics,fieldToFilter,filterValue)
 ```
 Examples of statistics:
 ```JavaScript
-<<<<<<< Updated upstream
-// Get the sum of the field (column) "Revenue" (without any filters)
-=======
 //Get the sum of the field (column) "Revenue" (including all rows without any filters)
->>>>>>> Stashed changes
 GoogleSheet.statistics("Revenue").sum;
 // Get the mean of the field "Rating", with the filter: "FirstName"="Anna"
 GoogleSheet.statistics("Rating","FirstName","Anna").mean;
